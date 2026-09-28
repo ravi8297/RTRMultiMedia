@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # RTR Media Solutions - Training Platform
 
 RTR Media Solutions is a professional training platform built with Next.js 14, MongoDB, and NextAuth.js. It offers courses in Excel, Python, SAP, Java, Web Development, and more.
@@ -153,3 +154,6 @@ npm run start
 ## License
 
 MIT
+=======
+# RTRMultiMedia
+>>>>>>> c79f651e3fc6ad0c02a896b2c79b9bc1bb8b6147
