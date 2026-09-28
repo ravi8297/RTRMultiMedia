@@ -128,7 +128,7 @@ export default function CoursesPage() {
                   </h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2">{course.shortDescription}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-teal-600">${course.price}</span>
+                    <span className="text-2xl font-bold text-teal-600">₹{course.price}</span>
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.299 4.004 4.401-.627c.916-.132 1.67.739 1.492 1.527l-3.333 2.583 1.299 4.403c.277.921-.778 1.643-1.515 1.157l-3.728-2.41 3.728 2.41c-.737.486-1.792-.236-1.515-1.157l-1.299-4.403-3.333-2.583c-.188-.788.579-1.657 1.492-1.527l4.401.628c.3-.921 1.603-.921 1.902 0l4.401-.627c.916-.132 1.67.739 1.492 1.527l-3.333 2.583 1.299 4.403c.277.921-.778 1.643-1.515 1.157l-3.728-2.41z" />
