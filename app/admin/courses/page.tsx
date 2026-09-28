@@ -92,7 +92,7 @@ export default async function AdminCoursesPage() {
                     {course.category}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    ${course.price}
+                    ₹{course.price}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">
                     {course.level}
