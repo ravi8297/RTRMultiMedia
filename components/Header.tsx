@@ -23,8 +23,8 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-navy-700">RTR Media Solutions</span>
-            { /* <span className="text-lg font-medium text-gray-700">Media Solutions</span> */}
+              <span className="text-2xl font-bold text-navy-700">RTR Media Solution</span>
+              {/*  <span className="text-lg font-medium text-gray-700">Media Solutions</span> */}
             </Link>
           </div>
 
