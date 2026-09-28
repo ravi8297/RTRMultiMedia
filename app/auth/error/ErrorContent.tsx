@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function AuthErrorContent() {
   const searchParams = useSearchParams();
-  const error = searchParams.get("error") || "Authentication failed";
+  const error = searchParams?.get("error") || "Authentication failed";
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
