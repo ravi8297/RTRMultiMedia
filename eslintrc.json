@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "semi": ["error", "always"],
+    "singleQuote": ["error", "always"]
+  },
+  "extends": ["next/core-web-vitals"]
+}
