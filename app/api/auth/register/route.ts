@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
-import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
     await dbConnect();
 
-    const { name, email, password, role } = await req.json();
+    const { name, email, password } = await req.json();
 
     // Validate required fields
     if (!name || !email || !password) {
@@ -26,15 +25,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Create user
+    // Create user (password is hashed once by the pre("save") hook in the model)
     const user = await User.create({
       name,
       email,
-      password: hashedPassword,
-      role: role || "student",
+      password,
     });
 
     return NextResponse.json(

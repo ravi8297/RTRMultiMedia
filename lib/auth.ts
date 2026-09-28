@@ -68,7 +68,7 @@ export const authOptions: AuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-key-change-in-production",
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 // Helper function to get session in server components

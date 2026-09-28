@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -27,8 +28,12 @@ export default async function DashboardPage() {
     redirect("/auth/login");
   }
 
-  // Fetch enrollments
-  const enrollmentsRes = await fetch(`/api/enrollments/my`);
+    // Fetch enrollments
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const enrollmentsRes = await fetch(`${baseUrl}/api/enrollments/my`, {
+    headers: { cookie: cookies().toString() },
+    cache: "no-store",
+  });
   const { enrollments = [] } = await enrollmentsRes.json();
 
   const enrolledCourses = enrollments.filter((e: EnrollmentType) => e.paymentStatus === "paid");
