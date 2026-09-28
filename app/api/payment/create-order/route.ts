@@ -38,7 +38,8 @@ export async function POST(req: Request) {
     const options = {
       amount,
       currency: "INR",
-      receipt: `course_${courseId}_user_${userId}_${Date.now()}`, // Unique receipt
+     // receipt: `course_${courseId}_user_${userId}_${Date.now()}`, // Unique receipt
+      receipt: `rcpt_${Date.now()}`,
       payment_capture: 1, // Auto capture
       notes: {
         courseId: courseId.toString(),
