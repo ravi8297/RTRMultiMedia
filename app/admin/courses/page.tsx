@@ -271,7 +271,7 @@ export default function AdminCoursesPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-navy-700 mb-2">
-                        Original Price ($)
+                        Original Price (₹)
                       </label>
                       <input
                         type="number"

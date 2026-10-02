@@ -56,7 +56,7 @@ export default async function FeaturedCourses() {
 
                   <div className="mt-4 flex items-center justify-between">
                     <span className="text-2xl font-bold text-teal-600">
-                      ${course.price}
+                      ₹{course.price}
                     </span>
                     <span className="text-sm text-gray-500">
                       {course.duration}

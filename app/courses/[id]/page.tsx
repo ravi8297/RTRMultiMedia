@@ -125,15 +125,15 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
           <div className="flex items-baseline gap-4 mb-8">
             {discount > 0 && (
               <>
-                <span className="text-4xl font-bold text-teal-600">${course.price}</span>
-                <span className="text-xl text-gray-500 line-through">${course.originalPrice}</span>
+                <span className="text-4xl font-bold text-teal-600">₹{course.price}</span>
+                <span className="text-xl text-gray-500 line-through">₹{course.originalPrice}</span>
                 <span className="px-3 py-1 bg-green-100 text-green-700 font-semibold rounded-full">
                   Save {discount}%
                 </span>
               </>
             )}
             {discount === 0 && (
-              <span className="text-4xl font-bold text-teal-600">${course.price}</span>
+              <span className="text-4xl font-bold text-teal-600">₹{course.price}</span>
             )}
           </div>
         </div>

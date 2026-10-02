@@ -224,13 +224,13 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
           <div className="border-t border-gray-100 pt-6 space-y-2">
             <div className="flex justify-between text-gray-600">
               <span>Course Fee</span>
-              <span className="font-semibold text-teal-600">${course?.price}</span>
+              <span className="font-semibold text-teal-600">₹{course?.price}</span>
             </div>
             {discount > 0 && (
               <>
                 <div className="flex justify-between text-gray-400 line-through">
                   <span>Original Price</span>
-                  <span>${course?.originalPrice}</span>
+                  <span>₹{course?.originalPrice}</span>
                 </div>
                 <div className="flex justify-between text-green-600 font-semibold">
                   <span>Discount</span>
@@ -240,7 +240,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
             )}
             <div className="border-t border-gray-100 pt-4 flex justify-between text-lg font-bold text-navy-700">
               <span>Total</span>
-              <span>${course?.price}</span>
+              <span>₹{course?.price}</span>
             </div>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function CheckoutPage({ params }: { params: { id: string } }) {
               Processing Payment...
             </span>
           ) : (
-            `Confirm Enrollment - $${course?.price}`
+            `Confirm Enrollment - ₹${course?.price}`
           )}
         </button>
 

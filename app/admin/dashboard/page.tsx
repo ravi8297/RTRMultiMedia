@@ -131,7 +131,7 @@ export default async function AdminDashboard() {
               <div>
                 <p className="text-sm text-gray-500">Total Revenue</p>
                 <p className="text-3xl font-bold text-teal-600">
-                  ${stats.totalRevenue.toLocaleString()}
+                  ₹{stats.totalRevenue.toLocaleString()}
                 </p>
               </div>
               <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
@@ -254,7 +254,7 @@ export default async function AdminDashboard() {
                     {payment.course?.title}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-teal-600">
-                    ${payment.amount}
+                    ₹{payment.amount}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
