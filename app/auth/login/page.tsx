@@ -13,8 +13,10 @@ export default function LoginPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  if (status === "authenticated") {
-    router.push("/dashboard");
+  // Redirect based on user role when authenticated
+  if (status === "authenticated" && session?.user?.role) {
+    const redirectPath = session.user.role === "admin" ? "/admin/dashboard" : "/dashboard";
+    router.push(redirectPath);
     return null;
   }
 
