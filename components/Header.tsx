@@ -52,7 +52,7 @@ function NavLink({
   children,
 }: {
   href: string;
-  label: string;
+  label?: string;
   onClick?: () => void;
   children?: React.ReactNode;
 }) {
@@ -79,7 +79,7 @@ function NavLink({
       onMouseDown={addRipple}
     >
       {rect && <RippleLayer elRect={rect} />}
-      {label}
+      {children}
       {isActive && (
         <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-400 rounded-full animate-in slide-in-from-bottom-1" />
       )}
