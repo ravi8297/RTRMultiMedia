@@ -141,7 +141,7 @@ export default function AdminCoursesPage() {
     setForm({
       title: course.title || "",
       shortDescription: course.shortDescription || "",
-      description: "",
+      description: course.description || "",
       category: course.category || "",
       price: course.price.toString() || "",
       originalPrice: "",
@@ -504,6 +504,16 @@ export default function AdminCoursesPage() {
                   onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   placeholder="Brief description"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-navy-700 mb-1">Full Description *</label>
+                <textarea
+                  name="description" required value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  rows={4}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                  placeholder="Detailed course description"
                 />
               </div>
               <div>
