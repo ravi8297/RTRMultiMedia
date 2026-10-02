@@ -54,7 +54,7 @@ function NavLink({
   label: string;
   onClick?: () => void;
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
   const { addRipple, RippleLayer } = useRipple();
   const ref = useRef<HTMLAnchorElement>(null);
