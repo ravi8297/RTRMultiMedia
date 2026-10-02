@@ -114,7 +114,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (originalPrice !== undefined && (isNaN(originalPriceNum) || originalPriceNum < 0)) {
+    if (originalPriceNum !== undefined && originalPriceNum < 0) {
       return NextResponse.json(
         { error: "Original price must be a valid number greater than or equal to 0" },
         { status: 400 }
