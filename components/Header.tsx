@@ -17,6 +17,10 @@ export function Header() {
     { href: "/contact", label: "Contact" },
   ];
 
+  // Role-aware paths
+  const dashboardPath = session?.user?.role === "admin" ? "/admin/dashboard" : "/dashboard";
+  const coursesPath = session?.user?.role === "admin" ? "/admin/courses" : "/courses";
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
@@ -33,7 +37,7 @@ export function Header() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={link.href === "/courses" ? coursesPath : link.href}
                 className="text-gray-600 hover:text-teal-600 font-medium transition-colors"
               >
                 {link.label}
@@ -47,7 +51,7 @@ export function Header() {
             ) : session ? (
               <>
                 <Link
-                  href="/dashboard"
+                  href={dashboardPath}
                   className="text-gray-600 hover:text-teal-600 font-medium transition-colors"
                 >
                   My Dashboard
@@ -107,7 +111,7 @@ export function Header() {
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
-                  href={link.href}
+                  href={link.href === "/courses" ? coursesPath : link.href}
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -120,7 +124,7 @@ export function Header() {
                 ) : session ? (
                   <>
                     <Link
-                      href="/dashboard"
+                      href={dashboardPath}
                       className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-50"
                       onClick={() => setMobileMenuOpen(false)}
                     >
