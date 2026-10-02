@@ -49,10 +49,12 @@ function NavLink({
   href,
   label,
   onClick,
+  children,
 }: {
   href: string;
   label: string;
   onClick?: () => void;
+  children?: React.ReactNode;
 }) {
   const pathname = usePathname() || "";
   const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
