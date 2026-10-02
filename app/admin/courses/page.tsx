@@ -1,8 +1,9 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import dbConnect from "@/lib/mongodb";
-import Course from "@/models/Course";
 
 interface CourseType {
   _id: string;
@@ -19,16 +20,51 @@ interface CourseType {
   createdAt: Date;
 }
 
-export default async function AdminCoursesPage() {
-  const session = await auth();
+export default function AdminCoursesPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [courses, setCourses] = useState<CourseType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
-  if (!session || session.user?.role !== "admin") {
-    redirect("/admin/login");
+  // Redirect if not admin
+  if (status === "authenticated" && session?.user?.role !== "admin") {
+    router.push("/admin/login");
+    return null;
   }
 
-  await dbConnect();
+  // Fetch courses on component mount
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("/api/courses");
+        if (response.ok) {
+          const data = await response.json();
+          setCourses(data.courses);
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const courses = await Course.find().sort({ createdAt: -1 }).lean() as unknown as CourseType[];
+    if (status === "authenticated") {
+      fetchCourses();
+    }
+  }, [status]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-teal-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading courses...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -40,7 +76,7 @@ export default async function AdminCoursesPage() {
             <p className="text-gray-600 mt-1">Add, edit, or delete courses</p>
           </div>
           <button
-            onClick={() => (document.getElementById("addCourseModal") as HTMLDialogElement | null)?.showModal()}
+            onClick={() => setShowModal(true)}
             className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
           >
             + Add Course
@@ -141,197 +177,205 @@ export default async function AdminCoursesPage() {
         </div>
 
         {/* Add Course Modal */}
-        <dialog id="addCourseModal" className="modal">
-          <div className="modal-box bg-white rounded-xl shadow-xl max-w-2xl w-full">
-            <h3 className="text-xl font-bold text-navy-700 mb-4">Add New Course</h3>
-
-            <form method="dialog" className="space-y-4">
-              {/* Course Title */}
-              <div>
-                <label className="block text-sm font-medium text-navy-700 mb-2">
-                  Course Title *
-                </label>
-                <input
-                  type="text"
-                  name="title"
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="Enter course title"
-                />
-              </div>
-
-              {/* Short Description */}
-              <div>
-                <label className="block text-sm font-medium text-navy-700 mb-2">
-                  Short Description *
-                </label>
-                <input
-                  type="text"
-                  name="shortDescription"
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="Brief course description"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="block text-sm font-medium text-navy-700 mb-2">
-                  Full Description *
-                </label>
-                <textarea
-                  name="description"
-                  required
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="Detailed course description"
-                />
-              </div>
-
-              {/* Category */}
-              <div>
-                <label className="block text-sm font-medium text-navy-700 mb-2">
-                  Category *
-                </label>
-                <select
-                  name="category"
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                >
-                  <option value="">Select category</option>
-                  <option value="Programming">Programming</option>
-                  <option value="Data">Data</option>
-                  <option value="Web">Web</option>
-                  <option value="ERP">ERP</option>
-                </select>
-              </div>
-
-              {/* Price */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-navy-700 mb-2">
-                    Price (₹) *
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    required
-                    min="0"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    placeholder="0.00"
-                  />
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-navy-700">Add New Course</h3>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-navy-700 mb-2">
-                    Original Price ($)
-                  </label>
-                  <input
-                    type="number"
-                    name="originalPrice"
-                    min="0"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    placeholder="0.00"
-                  />
-                </div>
-              </div>
 
-              {/* Duration & Lessons */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-navy-700 mb-2">
-                    Duration *
-                  </label>
-                  <input
-                    type="text"
-                    name="duration"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    placeholder="e.g., 10 hours"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-navy-700 mb-2">
-                    Lessons *
-                  </label>
-                  <input
-                    type="number"
-                    name="lessons"
-                    required
-                    min="1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    placeholder="Number of lessons"
-                  />
-                </div>
-              </div>
+                <form className="space-y-4">
+                  {/* Course Title */}
+                  <div>
+                    <label className="block text-sm font-medium text-navy-700 mb-2">
+                      Course Title *
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      placeholder="Enter course title"
+                    />
+                  </div>
 
-              {/* Level */}
-              <div>
-                <label className="block text-sm font-medium text-navy-700 mb-2">
-                  Level
-                </label>
-                <select
-                  name="level"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                >
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
-                </select>
-              </div>
+                  {/* Short Description */}
+                  <div>
+                    <label className="block text-sm font-medium text-navy-700 mb-2">
+                      Short Description *
+                    </label>
+                    <input
+                      type="text"
+                      name="shortDescription"
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      placeholder="Brief course description"
+                    />
+                  </div>
 
-              {/* Instructor */}
-              <div>
-                <label className="block text-sm font-medium text-navy-700 mb-2">
-                  Instructor Name *
-                </label>
-                <input
-                  type="text"
-                  name="instructor"
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="Instructor name"
-                />
-              </div>
+                  {/* Description */}
+                  <div>
+                    <label className="block text-sm font-medium text-navy-700 mb-2">
+                      Full Description *
+                    </label>
+                    <textarea
+                      name="description"
+                      required
+                      rows={4}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      placeholder="Detailed course description"
+                    />
+                  </div>
 
-              {/* Thumbnail URL */}
-              <div>
-                <label className="block text-sm font-medium text-navy-700 mb-2">
-                  Thumbnail URL *
-                </label>
-                <input
-                  type="url"
-                  name="thumbnail"
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                  placeholder="https://example.com/thumbnail.jpg"
-                />
-              </div>
+                  {/* Category */}
+                  <div>
+                    <label className="block text-sm font-medium text-navy-700 mb-2">
+                      Category *
+                    </label>
+                    <select
+                      name="category"
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    >
+                      <option value="">Select category</option>
+                      <option value="Programming">Programming</option>
+                      <option value="Data">Data</option>
+                      <option value="Web">Web</option>
+                      <option value="ERP">ERP</option>
+                    </select>
+                  </div>
 
-              {/* Actions */}
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                  onClick={() => (document.getElementById("addCourseModal") as HTMLDialogElement | null)?.close()}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-                >
-                  Add Course
-                </button>
-              </div>
-            </form>
+                  {/* Price */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-navy-700 mb-2">
+                        Price (₹) *
+                      </label>
+                      <input
+                        type="number"
+                        name="price"
+                        required
+                        min="0"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                        placeholder="0.00"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-navy-700 mb-2">
+                        Original Price ($)
+                      </label>
+                      <input
+                        type="number"
+                        name="originalPrice"
+                        min="0"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
 
-            <div className="modal-action">
-              <form method="dialog">
-                <button className="btn">Close</button>
-              </form>
+                  {/* Duration & Lessons */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-navy-700 mb-2">
+                        Duration *
+                      </label>
+                      <input
+                        type="text"
+                        name="duration"
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                        placeholder="e.g., 10 hours"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-navy-700 mb-2">
+                        Lessons *
+                      </label>
+                      <input
+                        type="number"
+                        name="lessons"
+                        required
+                        min="1"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                        placeholder="Number of lessons"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Level */}
+                  <div>
+                    <label className="block text-sm font-medium text-navy-700 mb-2">
+                      Level
+                    </label>
+                    <select
+                      name="level"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    >
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                    </select>
+                  </div>
+
+                  {/* Instructor */}
+                  <div>
+                    <label className="block text-sm font-medium text-navy-700 mb-2">
+                      Instructor Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="instructor"
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      placeholder="Instructor name"
+                    />
+                  </div>
+
+                  {/* Thumbnail URL */}
+                  <div>
+                    <label className="block text-sm font-medium text-navy-700 mb-2">
+                      Thumbnail URL *
+                    </label>
+                    <input
+                      type="url"
+                      name="thumbnail"
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      placeholder="https://example.com/thumbnail.jpg"
+                    />
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex justify-end gap-3 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => setShowModal(false)}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+                    >
+                      Add Course
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
-        </dialog>
+        )}
       </div>
     </main>
   );
