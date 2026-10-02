@@ -9,6 +9,7 @@ interface CourseType {
   _id: string;
   title: string;
   shortDescription: string;
+  description: string;
   thumbnail: string;
   price: number;
   category: string;
