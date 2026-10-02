@@ -34,10 +34,12 @@ export default function AdminBlogPage({ searchParams }: { searchParams: { edit?:
   const [deleteError, setDeleteError] = useState("");
   const [formLoading, setFormLoading] = useState(false);
 
-  // Redirect if not admin
+  // Redirect if not admin - using type assertion since next-auth doesn't expose role in session.user type
   useEffect(() => {
     if (status === "loading") return;
-    if (!session?.user || (session.user as any)?.role !== "admin") {
+    // Type-safe check for admin role with proper type assertion
+    const isAdmin = session?.user && (session.user as any).role === "admin";
+    if (!isAdmin) {
       router.push("/admin/login");
     }
   }, [session, status, router]);
@@ -76,19 +78,17 @@ export default function AdminBlogPage({ searchParams }: { searchParams: { edit?:
     fetchBlogs();
   }, []);
 
-  if (status === "loading" || (status === "authenticated" && (session.user as any)?.role !== "admin" && !blogs.length && loading)) {
+  // Loading/error state while redirecting non-admin users
+  const isAdmin = status === "authenticated" && session?.user && (session.user as any).role === "admin";
+  if (status === "loading" || !isAdmin) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-center">
-          <div className="h-8 bg-gray-200 rounded mb-4 w-48 mx-auto" />
-          <div className="h-64 bg-gray-200 rounded-xl mx-auto w-full max-w-md" />
+        <div className="text-center">
+          <div className="animate-spin h-10 w-10 border-4 border-teal-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
-  }
-
-  if (!session?.user || (session.user as any)?.role !== "admin") {
-    return null; // Redirect handled by useEffect
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
