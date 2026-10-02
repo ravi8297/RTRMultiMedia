@@ -71,6 +71,32 @@ export async function PUT(
       );
     }
 
+    // Validate numeric fields
+    const priceNum = Number(price);
+    const lessonsNum = Number(lessons);
+    const originalPriceNum = originalPrice ? Number(originalPrice) : undefined;
+
+    if (isNaN(priceNum) || priceNum < 0) {
+      return NextResponse.json(
+        { error: "Price must be a valid number greater than or equal to 0" },
+        { status: 400 }
+      );
+    }
+
+    if (isNaN(lessonsNum) || lessonsNum < 1) {
+      return NextResponse.json(
+        { error: "Lessons must be a valid number greater than or equal to 1" },
+        { status: 400 }
+      );
+    }
+
+    if (originalPrice !== undefined && (isNaN(originalPriceNum) || originalPriceNum < 0)) {
+      return NextResponse.json(
+        { error: "Original price must be a valid number greater than or equal to 0" },
+        { status: 400 }
+      );
+    }
+
     const course = await Course.findByIdAndUpdate(
       params.id,
       {
@@ -78,12 +104,12 @@ export async function PUT(
         description,
         shortDescription,
         thumbnail,
-        price,
-        originalPrice,
+        price: priceNum,
+        originalPrice: originalPriceNum,
         category,
         level: level || "beginner",
         duration,
-        lessons,
+        lessons: lessonsNum,
         instructor,
         whatYouWillLearn: whatYouWillLearn || [],
         requirements: requirements || [],

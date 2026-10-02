@@ -11,7 +11,7 @@ export interface ICourse extends Document {
   level: "beginner" | "intermediate" | "advanced";
   duration: string;
   lessons: number;
-  instructor: mongoose.Types.ObjectId;
+  instructor: string;
   enrolledStudents: mongoose.Types.ObjectId[];
   rating: number;
   totalReviews: number;
@@ -72,8 +72,7 @@ const CourseSchema = new Schema<ICourse>(
       min: 1,
     },
     instructor: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: [true, "Instructor is required"],
     },
     enrolledStudents: [
