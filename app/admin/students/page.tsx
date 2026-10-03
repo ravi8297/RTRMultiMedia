@@ -166,8 +166,9 @@ export default async function AdminStudentsPage() {
             </div>
           )}
         </div>
+          </div>
+        </div>
       </div>
-    </div>
     </main>
   );
 }
