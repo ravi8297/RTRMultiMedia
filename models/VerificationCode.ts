@@ -38,7 +38,7 @@ const VerificationCodeSchema = new Schema<IVerificationCode>(
     purpose: {
       type: String,
       required: [true, "Purpose is required"],
-      enum: Object.values(VerificationPurpose),
+      enum: ["activate-account", "verify-email", "reset-password"],
       trim: true,
     },
     expiresAt: {
