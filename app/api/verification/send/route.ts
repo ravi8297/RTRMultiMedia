@@ -122,7 +122,8 @@ export async function POST(request: NextRequest) {
     );
   }
   // 3b. Auth-specific authorization (non-admins cannot target others).
-  if (authenticated && sessionUser?.role !== "admin" && targetUserId !== sessionUser.id) {
+  // We check sessionUser directly so TypeScript knows it's non-null in this branch.
+  if (sessionUser && sessionUser.role !== "admin" && targetUserId !== sessionUser.id) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
