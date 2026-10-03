@@ -66,11 +66,13 @@ export async function POST(request: NextRequest) {
 
   // 3. Resolve the target user ID — or run dummy timing to hide
   //    the "no such user" branch from latency-based enumeration.
-  const targetId = userId
-    ? userId
-    : email
-      ? await User.findOne({ email }).select("_id").lean().then((u) => (u ? (u._id as string) : null))
-      : null;
+  let targetId: string | null = null;
+  if (userId) {
+    targetId = userId;
+  } else if (email) {
+    const u = await User.findOne({ email }).select("_id");
+    targetId = u?._id.toString() ?? null;
+  }
 
   if (!targetId) {
     // No user/email: normalize timing so an attacker can't tell a
