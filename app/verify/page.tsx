@@ -12,7 +12,7 @@ export default function VerifyPage() {
   const searchParams = useSearchParams();
 
   // Pre-fill email from query param if present (e.g. after register redirect)
-  const initialEmail = searchParams.get("email") ?? "";
+  const initialEmail = searchParams?.get("email") ?? "";
 
   const [email, setEmail] = useState(initialEmail);
   const [code, setCode] = useState("");
