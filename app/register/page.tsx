@@ -33,8 +33,15 @@ export default function RegisterPage() {
         throw new Error(data.error || "Something went wrong");
       }
 
-      toast.success("Account created successfully!");
-      router.push("/auth/login");
+      // The account is created but unverified (`isVerified: false`), so we
+      // send the user directly to the verification screen instead of the
+      // login page.
+      toast.success(
+        data.codeSent
+          ? "Account created! Check your email for the verification code."
+          : "Account created! Please check your email — if you didn't receive the code, use 'Resend code' on the next screen."
+      );
+      router.push(`/verify?email=${encodeURIComponent(email)}`);
     } catch (err: any) {
       setError(err.message);
       toast.error(err.message);

@@ -71,6 +71,16 @@ export default function LoginPage() {
         {error && (
           <div className="bg-red-50/80 backdrop-blur border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm animate-shake">
             {error}
+            {error.includes("verified") && (
+              <div className="mt-2">
+                <Link
+                  href={`/verify?email=${encodeURIComponent(email)}`}
+                  className="underline font-medium hover:text-red-800 transition-colors"
+                >
+                  Resend activation code
+                </Link>
+              </div>
+            )}
           </div>
         )}
 

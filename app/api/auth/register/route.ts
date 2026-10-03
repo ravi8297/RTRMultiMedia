@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
+import { createVerificationCode } from "@/lib/verification";
+import { sendVerificationCode } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -25,15 +27,40 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create user (password is hashed once by the pre("save") hook in the model)
+    // Create the user. `isVerified` defaults to false → the account starts in
+    // "pending verification" state and cannot log in until the code is entered.
     const user = await User.create({
       name,
       email,
       password,
     });
 
+    // Auto-trigger the activation code (Part 2). A failure here (e.g. email
+    // provider down) should NOT block registration — the user can always
+    // "resend" from the verify page.
+    let codeSent = false;
+    try {
+      const code = await createVerificationCode(user._id, "activate-account");
+      await sendVerificationCode({
+        to: email,
+        code,
+        purpose: "activate-account",
+      });
+      codeSent = true;
+    } catch (sendError: any) {
+      console.error(
+        `[register] Failed to send activation code for ${email}:`,
+        sendError.message
+      );
+      // Non-fatal: the user can resend from /verify.
+    }
+
     return NextResponse.json(
-      { message: "User created successfully", userId: user._id },
+      {
+        message: "User created successfully. A verification code was sent to your email.",
+        userId: user._id,
+        codeSent,
+      },
       { status: 201 }
     );
   } catch (error: any) {

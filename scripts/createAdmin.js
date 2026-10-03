@@ -39,6 +39,7 @@ async function createAdmin() {
       email: adminData.email,
       password: hashedPassword,
       role: adminData.role,
+      isVerified: true,
     });
 
     console.log("Admin user created successfully!");

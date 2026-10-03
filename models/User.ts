@@ -8,6 +8,7 @@ export interface IUser extends Document {
   phone?: string;
   avatar?: string;
   enrolledCourses: mongoose.Types.ObjectId[];
+  isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,6 +50,10 @@ const UserSchema = new Schema<IUser>(
         ref: "Course",
       },
     ],
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

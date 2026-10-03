@@ -36,11 +36,21 @@ export const authOptions: AuthOptions = {
           throw new Error("Invalid password");
         }
 
+        // Gate: only verified accounts may sign in. Unverified users must
+        // complete the activation flow first. We gate on `=== false` so
+        // newly registered users (explicitly unverified) are blocked, while
+        // legacy accounts and pre-seeded users (field absent) are allowed
+        // through unchanged.
+        if (user.isVerified === false) {
+          throw new Error("Account not verified. Please verify your account first.");
+        }
+
         return {
           id: user._id.toString(),
           email: user.email,
           name: user.name,
           role: user.role,
+          isVerified: user.isVerified,
         };
       },
     }),

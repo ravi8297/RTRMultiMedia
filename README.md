@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # RTR Media Solutions - Training Platform
 
 RTR Media Solutions is a professional training platform built with Next.js 14, MongoDB, and NextAuth.js. It offers courses in Excel, Python, SAP, Java, Web Development, and more.
@@ -11,6 +10,7 @@ RTR Media Solutions is a professional training platform built with Next.js 14, M
 - **Contact Form**: Public contact form with message storage
 - **Payment Integration**: Razorpay payment processing for course enrollment
 - **Authentication**: Secure login/register with NextAuth.js and JWT
+- **Account Activation**: Email verification with secure, rate-limited code verification
 
 ## Tech Stack
 
@@ -21,6 +21,7 @@ RTR Media Solutions is a professional training platform built with Next.js 14, M
 - **Styling**: Tailwind CSS
 - **Charts**: Recharts
 - **State Management**: React hooks
+- **Verification**: Custom verification-code system with bcrypt hashing and rate limiting
 
 ## Getting Started
 
@@ -64,6 +65,10 @@ NEXTAUTH_URL=http://localhost:3000
 # Razorpay (get from https://dashboard.razorpay.com/)
 RAZORPAY_KEY_ID=your_razorpay_key_id
 RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+
+# Resend (for verification email delivery)
+RESEND_API_KEY=re_xxx
+RESEND_FROM=noreply@your-domain.com
 ```
 
 ### 4. Run the development server
@@ -81,6 +86,40 @@ Run the admin creation script after the first run:
 ```bash
 node scripts/createAdmin.js
 ```
+
+## Account Activation (Verification System)
+
+The platform includes a secure account activation system to ensure account ownership and prevent unauthorized access.
+
+### How It Works
+
+1. **Registration**: When a new user registers, their account is created with `isVerified: false`. An automated 6-digit verification code is immediately generated and sent to their email.
+
+2. **Verification**: The user visits the `/verify` page to enter the 6-digit code they received.
+
+3. **Security Features**:
+   - **Rate Limiting**: 5 codes per hour per user, and 20 requests per hour per IP
+   - **One-Time Use**: Each code can only be used once
+   - **Time-Limited**: Codes expire after 5-10 minutes
+   - **Rate Limiting**: 3 failed attempts lock the code for the duration
+   - **Hashing**: Codes are hashed with bcrypt (cost 12) for security
+   - **No Enumeration**: All responses use the same generic messages to prevent email enumeration
+
+4. **Login Restrictions**: Only verified accounts (`isVerified: true`) can log in. Unverified users see a "Resend activation code" link to get a new code.
+
+### Verification Code System
+
+- **Generation**: Cryptographically secure 6-digit codes (100000-999999)
+- **Delivery**: Configured email provider (Resend by default, with console logging for dev)
+- **Security**: bcrypt hashing, rate limits, attempt tracking, and expiry
+- **User Experience**: Clean, accessible interface with auto-submit and resend functionality
+
+### Security
+
+- **Brute Force Protection**: 3 attempts per code + 5 codes/hour user limit
+- **Inbox Flooding Prevention**: Per-user and per-IP rate limits
+- **Timing Attacks**: Constant-time bcrypt comparisons
+- **Enumeration Prevention**: Identical responses for all failure cases
 
 ## Scripts
 
@@ -112,9 +151,15 @@ rtrproj/
 │   ├── about/           # About page
 │   ├── trainers/        # Trainers page
 │   └── page.tsx         # Home page
+├── app/api/verification/  # Verification system APIs
+│   ├── send/           # Send verification code
+│   └── validate/       # Validate verification code
 ├── components/          # Reusable React components
 ├── lib/                 # Utility functions and configs
+│   ├── verification.ts # Verification code system
+│   └── auth.ts        # NextAuth configuration
 ├── models/              # Mongoose models
+│   └── User.ts         # User model with isVerified field
 ├── scripts/             # Setup scripts
 ├── public/              # Static assets
 ├── tailwind.config.js   # Tailwind CSS config
@@ -128,12 +173,14 @@ rtrproj/
 All sensitive values should be stored in `.env.local` and never committed to version control:
 
 | Variable | Description | Required |
-|----------|-------------|----------|
+|----------├-----------|----------|
 | `MONGODB_URI` | MongoDB connection string | Yes |
 | `NEXTAUTH_SECRET` | Random secret for JWT signing | Yes |
+
 | `NEXTAUTH_URL` | Application URL | Yes |
 | `RAZORPAY_KEY_ID` | Razorpay API key | Yes |
 | `RAZORPAY_KEY_SECRET` | Razorpay API secret | Yes |
+| `RESEND_API_KEY` | Resend API key for email delivery | Recommended |
 
 ## Deployment
 
@@ -154,6 +201,3 @@ npm run start
 ## License
 
 MIT
-=======
-# RTRMultiMedia
->>>>>>> c79f651e3fc6ad0c02a896b2c79b9bc1bb8b6147
