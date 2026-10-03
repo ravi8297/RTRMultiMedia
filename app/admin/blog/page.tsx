@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { AdminNavBar } from "@/components/AdminNavBar";
 
 interface BlogType {
   _id: string;
@@ -40,7 +41,7 @@ export default function AdminBlogPage({ searchParams }: { searchParams: { edit?:
     // Type-safe check for admin role with proper type assertion
     const isAdmin = session?.user && (session.user as any).role === "admin";
     if (!isAdmin) {
-      router.push("/admin/login");
+      router.push("/unauthorized");
     }
   }, [session, status, router]);
 
@@ -198,6 +199,8 @@ export default function AdminBlogPage({ searchParams }: { searchParams: { edit?:
             + New Post
           </Link>
         </div>
+
+        <AdminNavBar />
 
         {/* Blog Form */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-8">

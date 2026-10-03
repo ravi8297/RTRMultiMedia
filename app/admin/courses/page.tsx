@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { AdminNavBar } from "@/components/AdminNavBar";
 
 interface CourseType {
   _id: string;
@@ -101,7 +102,7 @@ export default function AdminCoursesPage() {
 
   // Redirect if not admin
   if (status === "authenticated" && session?.user?.role !== "admin") {
-    router.push("/admin/login");
+    router.push("/unauthorized");
     return null;
   }
 
@@ -281,6 +282,8 @@ export default function AdminCoursesPage() {
             + Add Course
           </button>
         </div>
+
+        <AdminNavBar />
 
         {/* Courses Table */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
