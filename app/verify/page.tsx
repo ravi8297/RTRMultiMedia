@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -7,7 +8,7 @@ import { toast } from "react-hot-toast";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
-export default function VerifyPage() {
+function VerifyPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -204,5 +205,22 @@ export default function VerifyPage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-gradient-to-br from-navy-700 via-teal-600 to-navy-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="max-w-md w-full space-y-8 bg-white/95 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-white/20 relative z-10 text-center">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-700 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+            <span className="text-white font-bold text-2xl">RTR</span>
+          </div>
+          <p className="text-gray-300">Loading verification...</p>
+        </div>
+      </main>
+    }>
+      <VerifyPageContent />
+    </Suspense>
   );
 }
