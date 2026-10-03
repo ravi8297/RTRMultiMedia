@@ -18,8 +18,9 @@ export async function middlewareAuth(req: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
-  // Protect admin-only routes
-  if (pathname.startsWith("/admin") && !token) {
+  // Protect admin-only routes (but NOT the login page itself —
+  // excluding it prevents an infinite redirect loop).
+  if (pathname.startsWith("/admin") && !token && pathname !== "/admin/login") {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
   if (pathname.startsWith("/admin") && token && token.role !== "admin") {
