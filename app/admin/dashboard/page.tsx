@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AdminNavBar } from "@/components/AdminNavBar";
+import { AdminSidebar } from "@/components/AdminSidebar";
 
 interface Stats {
   totalStudents: number;
@@ -106,7 +106,7 @@ export default async function AdminDashboard() {
         <AdminSidebar />
         <div className="flex-1 p-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
+            {/* Header */}
         <div className="mb-10">
           <div className="flex items-center justify-between">
             <div>

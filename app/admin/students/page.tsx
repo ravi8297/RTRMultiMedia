@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { AdminSidebar } from "@/components/AdminSidebar";
 
 interface EnrollmentType {
   _id: string;
@@ -29,7 +29,6 @@ interface StudentType {
 
 export default async function AdminStudentsPage() {
   const session = await auth();
-  const pathname = usePathname();
 
   if (!session || session.user?.role !== "admin") {
     redirect("/unauthorized");
@@ -43,37 +42,17 @@ export default async function AdminStudentsPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-navy-700">Students & Enrollments</h1>
-          <p className="text-gray-600 mt-1">Manage student accounts and track enrollments</p>
-        </div>
+      <div className="flex h-[calc(100vh-4rem)]">
+        <AdminSidebar />
+        <div className="flex-1 p-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-navy-700">Students & Enrollments</h1>
+              <p className="text-gray-600 mt-1">Manage student accounts and track enrollments</p>
+            </div>
 
-        {/* Admin Nav */}
-        <nav className="mb-6 flex overflow-x-auto gap-2 pb-2 border-b border-gray-200">
-          {[
-            { href: "/admin/dashboard", label: "Dashboard", icon: "📊" },
-            { href: "/admin/courses", label: "Courses", icon: "🎓" },
-            { href: "/admin/students", label: "Students", icon: "👥" },
-            { href: "/admin/blog", label: "Blog", icon: "📝" },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
-                pathname === item.href
-                  ? "bg-teal-600/10 text-teal-700 border-2 border-teal-400"
-                  : "text-gray-600 hover:text-navy-700 hover:bg-navy-100"
-              }`}
-            >
-              <span className="mr-2">{item.icon}</span>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Stats */}
+            {/* Stats */}
         <div className="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-4">
           <div className="bg-white rounded-xl shadow-md p-6">
             <p className="text-3xl font-bold text-navy-700">{students.length}</p>
@@ -188,6 +167,7 @@ export default async function AdminStudentsPage() {
           )}
         </div>
       </div>
+    </div>
     </main>
   );
 }
