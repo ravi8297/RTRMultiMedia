@@ -2,6 +2,7 @@ import { randomInt } from "crypto";
 import dbConnect from "./mongodb";
 import VerificationCode from "@/models/VerificationCode";
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
 import type { VerificationPurpose } from "@/models/VerificationCode";
 
 const CODE_DIGITS = 6;
