@@ -128,9 +128,10 @@ export async function POST(request: NextRequest) {
   }
 
   // 5. Generate the code (Part 1) — also invalidates any prior unused code.
-  const purpose: typeof queryPurpose extends "activate-account" | "verify-email" | "reset-password"
-    ? queryPurpose
-    : "activate-account" = (queryPurpose ?? "activate-account") as any;
+  const purpose = (queryPurpose ?? "activate-account") as
+    | "activate-account"
+    | "verify-email"
+    | "reset-password";
   const code = await createVerificationCode(targetUserId, purpose);
 
   // 6. Deliver the code via the configured provider (or console in dev mode).
