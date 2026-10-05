@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { auth } from "@/lib/auth";
+import bcrypt from "bcryptjs";
 
 export async function PUT(req: Request) {
   try {
