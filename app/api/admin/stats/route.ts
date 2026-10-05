@@ -72,6 +72,20 @@ export async function GET() {
       },
       { $sort: { count: -1 } },
       { $limit: 5 },
+      { $lookup: {
+          from: "courses",
+          localField: "_id",
+          foreignField: "_id",
+          as: "courseDetails"
+        }
+      },
+      { $unwind: "$courseDetails" },
+      { $project: {
+          _id: "$courseDetails._id",
+          title: "$courseDetails.title",
+          count: 1
+        }
+      }
     ]);
 
     return NextResponse.json({

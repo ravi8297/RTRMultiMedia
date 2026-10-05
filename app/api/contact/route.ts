@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import ContactMessage from "@/models/ContactMessage";
+import { auth } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -38,6 +39,15 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
+    const session = await auth();
+
+    if (!session || (session.user as any)?.role !== "admin") {
+      return NextResponse.json(
+        { error: "Unauthorized. Admin access required." },
+        { status: 403 }
+      );
+    }
+
     await dbConnect();
 
     const messages = await ContactMessage.find()

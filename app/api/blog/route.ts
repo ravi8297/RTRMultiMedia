@@ -3,15 +3,33 @@ import dbConnect from "@/lib/mongodb";
 import Blog from "@/models/Blog";
 import { auth } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     await dbConnect();
 
-    const blogs = await Blog.find()
-      .sort({ createdAt: -1 })
-      .lean();
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 100); // Cap at 100
+    const skip = (page - 1) * limit;
 
-    return NextResponse.json({ blogs });
+    const [blogs, total] = await Promise.all([
+      Blog.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Blog.countDocuments(),
+    ]);
+
+    return NextResponse.json({
+      blogs,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || "Failed to fetch blogs" },

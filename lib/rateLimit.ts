@@ -17,7 +17,7 @@ import { getServerSession } from "next-auth";
  * boundary. The DB-backed per-user limit is the real throttle.
  */
 const MAX_CODES_PER_USER_PER_HOUR = 5;
-const MAX_REQUESTS_PER_IP_PER_HOUR = 20;
+const MAX_REQUESTS_PER_IP_PER_HOUR = 5; // Reduced from 20 for unauthenticated users
 const WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
 // IP → count tracker (in-memory, resets on restart)

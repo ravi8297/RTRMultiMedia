@@ -1,8 +1,17 @@
 import RazorpayType from "razorpay";
 
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+
+if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+  throw new Error(
+    "RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET environment variables are required"
+  );
+}
+
 export const razorpay = new RazorpayType({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  key_id: RAZORPAY_KEY_ID,
+  key_secret: RAZORPAY_KEY_SECRET,
 });
 
 export async function createOrder(amount: number, currency = "INR", receipt: string) {
@@ -23,9 +32,18 @@ export function verifyPaymentSignature(
 ) {
   const crypto = require("crypto");
   const generatedSignature = crypto
-    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+    .createHmac("sha256", RAZORPAY_KEY_SECRET!)
     .update(orderId + "|" + paymentId)
     .digest("hex");
 
-  return generatedSignature === signature;
+  // Constant-time comparison to prevent timing attacks
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(generatedSignature, "utf-8"),
+      Buffer.from(signature, "utf-8")
+    );
+  } catch {
+    // Length mismatch — definitely not a valid signature
+    return false;
+  }
 }

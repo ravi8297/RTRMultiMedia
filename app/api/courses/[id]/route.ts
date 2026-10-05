@@ -2,12 +2,21 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Course from "@/models/Course";
 import { auth } from "@/lib/auth";
+import mongoose from "mongoose";
 
 export async function GET(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validate ObjectId format
+    if (!mongoose.isValidObjectId(params.id)) {
+      return NextResponse.json(
+        { error: "Invalid course ID" },
+        { status: 400 }
+      );
+    }
+
     await dbConnect();
 
     const course = await Course.findById(params.id).lean();
@@ -33,6 +42,14 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validate ObjectId format
+    if (!mongoose.isValidObjectId(params.id)) {
+      return NextResponse.json(
+        { error: "Invalid course ID" },
+        { status: 400 }
+      );
+    }
+
     const session = await auth();
 
     if (!session || (session.user as any)?.role !== "admin") {
@@ -44,7 +61,16 @@ export async function PUT(
 
     await dbConnect();
 
-    const body = await request.json();
+    // Wrap JSON parsing in try/catch for proper 400 response
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid request body" },
+        { status: 400 }
+      );
+    }
     const {
       title,
       description,
@@ -116,7 +142,7 @@ export async function PUT(
         tags: tags || [],
         isPublished: isPublished || false,
       },
-      { new: true }
+      { new: true, runValidators: true }
     );
 
     if (!course) {
@@ -128,6 +154,13 @@ export async function PUT(
 
     return NextResponse.json({ course });
   } catch (error: any) {
+    // Handle Mongoose validation errors gracefully
+    if (error.name === "ValidationError") {
+      return NextResponse.json(
+        { error: error.message || "Validation failed" },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { error: error.message || "Failed to update course" },
       { status: 500 }
@@ -140,6 +173,14 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Validate ObjectId format
+    if (!mongoose.isValidObjectId(params.id)) {
+      return NextResponse.json(
+        { error: "Invalid course ID" },
+        { status: 400 }
+      );
+    }
+
     const session = await auth();
 
     if (!session || (session.user as any)?.role !== "admin") {

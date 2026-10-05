@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/User";
 import { verifyActivationCode, normalizeTiming } from "@/lib/verification";
 import { extractIP, isIPRateLimited } from "@/lib/rateLimit";
+import dbConnect from "@/lib/mongodb";
 
 /**
  * Verify a 6-digit activation code and mark the user's account as active.
@@ -63,6 +64,9 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
+
+  // 3. Ensure database connection before user lookup (cold-start safety).
+  await dbConnect();
 
   // 3. Resolve the target user ID — or run dummy timing to hide
   //    the "no such user" branch from latency-based enumeration.

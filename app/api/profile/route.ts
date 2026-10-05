@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { auth } from "@/lib/auth";
-import bcrypt from "bcryptjs";
 
 export async function PUT(req: Request) {
   try {
@@ -35,6 +34,8 @@ export async function PUT(req: Request) {
     }
 
     // Update password if provided
+    // Note: We set the plain password and let the pre("save") hook handle hashing.
+    // The pre("save") hook in models/User.ts already hashes with bcrypt cost 12.
     if (newPassword && currentPassword) {
       const isMatch = await bcrypt.compare(currentPassword, user.password);
       if (!isMatch) {
@@ -43,7 +44,8 @@ export async function PUT(req: Request) {
           { status: 400 }
         );
       }
-      user.password = await bcrypt.hash(newPassword, 12);
+      // Set plain password — the pre("save") hook will hash it automatically
+      user.password = newPassword;
     }
 
     await user.save();

@@ -4,7 +4,7 @@ import User from "@/models/User";
 import Enrollment from "@/models/Enrollment";
 import { auth } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await auth();
 
@@ -17,27 +17,58 @@ export async function GET() {
 
     await dbConnect();
 
-    // Get all users with role student
-    const students = await User.find({ role: "student" }).select("-password").lean();
+    // Parse pagination params
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 100); // Cap at 100
+    const skip = (page - 1) * limit;
 
-    // For each student, get their enrollments
-    const studentsWithEnrollments = await Promise.all(
-      students.map(async (student) => {
-        const enrollments = await Enrollment.find({ student: student._id })
-          .populate("course")
-          .lean();
+    // Fetch students with pagination
+    const [students, total] = await Promise.all([
+      User.find({ role: "student" })
+        .select("-password")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      User.countDocuments({ role: "student" }),
+    ]);
 
-        return {
-          ...student,
-          enrollments,
-          totalEnrolled: enrollments.length,
-          paidEnrollments: enrollments.filter((e: any) => e.paymentStatus === "paid").length,
-          pendingEnrollments: enrollments.filter((e: any) => e.paymentStatus === "pending").length,
-        };
-      })
-    );
+    // Batch fetch all enrollments for these students in a single query (fixes N+1)
+    const studentIds = students.map((s) => s._id);
+    const enrollments = await Enrollment.find({ student: { $in: studentIds } })
+      .populate("course")
+      .lean();
 
-    return NextResponse.json({ students: studentsWithEnrollments });
+    // Group enrollments by student ID
+    const enrollmentsByStudent: Record<string, any[]> = {};
+    enrollments.forEach((e: any) => {
+      const key = e.student._id.toString();
+      if (!enrollmentsByStudent[key]) enrollmentsByStudent[key] = [];
+      enrollmentsByStudent[key].push(e);
+    });
+
+    // Attach enrollments to each student
+    const studentsWithEnrollments = students.map((student) => {
+      const studentEnrollments = enrollmentsByStudent[student._id.toString()] || [];
+      return {
+        ...student,
+        enrollments: studentEnrollments,
+        totalEnrolled: studentEnrollments.length,
+        paidEnrollments: studentEnrollments.filter((e) => e.paymentStatus === "paid").length,
+        pendingEnrollments: studentEnrollments.filter((e) => e.paymentStatus === "pending").length,
+      };
+    });
+
+    return NextResponse.json({
+      students: studentsWithEnrollments,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || "Failed to fetch students" },
