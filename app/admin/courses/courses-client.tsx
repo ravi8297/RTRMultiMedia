@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { AdminNavBar } from "@/components/AdminNavBar";
+import { AdminSidebar } from "@/components/AdminSidebar";
 
 interface CourseType {
   _id: string;
@@ -246,25 +246,26 @@ export default function AdminCoursesClient() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-navy-700">Manage Courses</h1>
-            <p className="text-gray-600 mt-1">Add, edit, or delete courses</p>
-          </div>
-          <button
-            onClick={openAddModal}
-            className="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl font-medium hover:from-teal-500 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-teal-500/25"
-          >
-            + Add Course
-          </button>
-        </div>
+      <div className="flex h-[calc(100vh-4rem)]">
+        <AdminSidebar />
+        <div className="flex-1 p-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {/* Header */}
+            <div className="mb-8 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-navy-700">Manage Courses</h1>
+                <p className="text-gray-600 mt-1">Add, edit, or delete courses</p>
+              </div>
+              <button
+                onClick={openAddModal}
+                className="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl font-medium hover:from-teal-500 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-teal-500/25"
+              >
+                + Add Course
+              </button>
+            </div>
 
-        <AdminNavBar />
-
-        {/* Courses Table */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            {/* Courses Table */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <table className="min-w-full divide-y divide-gray-100">
             <thead className="bg-gray-50/80">
               <tr>
@@ -636,6 +637,8 @@ export default function AdminCoursesClient() {
           </div>
         </Modal>
       </div>
-    </main>
+    </div>
+  </div>
+</main>
   );
 }
