@@ -198,6 +198,29 @@ npm run build
 npm run start
 ```
 
+## Security Audit (2025-10-05)
+
+A comprehensive code review was performed on all API routes, database connections, and models. Key findings:
+
+### Critical Issues Fixed
+- **Password double-hashing bug** in `app/api/profile/route.ts` — manual `bcrypt.hash()` before `user.save()` caused passwords to be hashed twice, locking users out after password change.
+- **Missing payment ownership authorization** in `app/api/payment/verify/route.ts` — Razorpay signature was verified but not cross-referenced against the user's order document, allowing potential enrollment fraud.
+
+### High Severity Issues
+- **MongoDB session leak risk** in payment verification transaction — session not guaranteed to close on error.
+- **N+1 query problem** in admin students endpoint — separate DB query per student.
+- **Missing `dbConnect()` calls** before queries in verification endpoints (cold-start failures).
+
+### Medium/Low Issues
+- Missing `runValidators: true` on update operations.
+- No ObjectId validation on route params.
+- No upper bound on pagination `limit`.
+- Dead code: `lib/dbConnect.js` (duplicate of `lib/mongodb.ts`).
+- Misleading env var error message in MongoDB connection.
+- Various input validation gaps.
+
+Fixes for critical and high-severity issues should be prioritized before production deployment.
+
 ## License
 
 MIT
