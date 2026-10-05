@@ -100,8 +100,12 @@ function MobileMenu({
   const { addRipple, RippleLayer } = useRipple();
   const [rect, setRect] = useState<DOMRect | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const dashboardPath = session?.user?.role === "admin" ? "/admin/dashboard" : "/dashboard";
-  const coursesPath = session?.user?.role === "admin" ? "/admin/courses" : "/courses";
+  const isAdmin = session?.user?.role === "admin";
+  const dashboardPath = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const coursesPath = isAdmin ? "/admin/courses" : "/courses";
+  const blogPath = isAdmin ? "/admin/blog" : "/blog";
+  const trainersPath = isAdmin ? "/admin/trainers" : "/trainers";
+  const aboutPath = isAdmin ? "/admin/about" : "/about";
 
   useEffect(() => {
     if (menuRef.current) setRect(menuRef.current.getBoundingClientRect());
@@ -117,9 +121,9 @@ function MobileMenu({
       <div className="px-4 py-3 space-y-1">
         <NavLink href="/" onClick={onClose}>Home</NavLink>
         <NavLink href={coursesPath} onClick={onClose}>Courses</NavLink>
-        <NavLink href="/about" onClick={onClose}>About</NavLink>
-        <NavLink href="/trainers" onClick={onClose}>Trainers</NavLink>
-        <NavLink href="/blog" onClick={onClose}>Blog</NavLink>
+        <NavLink href={aboutPath} onClick={onClose}>About</NavLink>
+        <NavLink href={trainersPath} onClick={onClose}>Trainers</NavLink>
+        <NavLink href={blogPath} onClick={onClose}>Blog</NavLink>
         <NavLink href="/contact" onClick={onClose}>Contact</NavLink>
 
         <div className="border-t border-white/10 pt-3 mt-2 space-y-1">
@@ -152,8 +156,12 @@ function MobileMenu({
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
-  const dashboardPath = session?.user?.role === "admin" ? "/admin/dashboard" : "/dashboard";
-  const coursesPath = session?.user?.role === "admin" ? "/admin/courses" : "/courses";
+  const isAdmin = session?.user?.role === "admin";
+  const dashboardPath = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const coursesPath = isAdmin ? "/admin/courses" : "/courses";
+  const blogPath = isAdmin ? "/admin/blog" : "/blog";
+  const trainersPath = isAdmin ? "/admin/trainers" : "/trainers";
+  const aboutPath = isAdmin ? "/admin/about" : "/about";
 
   // Close mobile menu on escape
   useEffect(() => {
@@ -194,9 +202,9 @@ export function Header() {
           <div className="hidden md:flex items-center space-x-1">
             <NavLink href="/">Home</NavLink>
             <NavLink href={coursesPath}>Courses</NavLink>
-            <NavLink href="/about">About</NavLink>
-            <NavLink href="/trainers">Trainers</NavLink>
-            <NavLink href="/blog">Blog</NavLink>
+            <NavLink href={aboutPath}>About</NavLink>
+            <NavLink href={trainersPath}>Trainers</NavLink>
+            <NavLink href={blogPath}>Blog</NavLink>
             <NavLink href="/contact">Contact</NavLink>
           </div>
 
