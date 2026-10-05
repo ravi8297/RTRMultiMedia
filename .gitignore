@@ -26,6 +26,7 @@ npm-debug.log*
 
 # Claude
 .claude/settings.local.json
+.claude/worktrees/
 
 # Misc
 coverage/
