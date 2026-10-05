@@ -50,7 +50,8 @@ export async function GET(request: Request) {
 
     // Attach enrollments to each student
     const studentsWithEnrollments = students.map((student) => {
-      const studentEnrollments = enrollmentsByStudent[student._id.toString()] || [];
+      const studentId = student._id?.toString() ?? '';
+      const studentEnrollments = enrollmentsByStudent[studentId] || [];
       return {
         ...student,
         enrollments: studentEnrollments,
