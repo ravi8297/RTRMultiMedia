@@ -27,8 +27,8 @@ export default async function BlogPage() {
   const isAdmin = session?.user?.role === "admin";
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
         {/* Header */}
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-bold text-navy-700 mb-3">Blog</h1>

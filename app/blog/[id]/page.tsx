@@ -48,10 +48,12 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-center">
-          <div className="h-8 bg-gray-200 rounded mb-4 w-48 mx-auto" />
-          <div className="h-64 bg-gray-200 rounded-xl w-full max-w-md mx-auto" />
+      <main className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex items-center justify-center">
+          <div className="animate-pulse text-center">
+            <div className="h-8 bg-gray-200 rounded mb-4 w-48 mx-auto" />
+            <div className="h-64 bg-gray-200 rounded-xl w-full max-w-md mx-auto" />
+          </div>
         </div>
       </main>
     );
@@ -74,8 +76,8 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
         {/* Breadcrumb */}
         <nav className="text-sm text-gray-500 mb-6">
           <Link href="/blog" className="hover:text-teal-600 transition-colors">Blog</Link>
