@@ -5,6 +5,7 @@ import User from "@/models/User";
 import { createVerificationCode, normalizeTiming } from "@/lib/verification";
 import { sendVerificationCode } from "@/lib/email";
 import { extractIP, isUserRateLimited, isIPRateLimited } from "@/lib/rateLimit";
+import dbConnect from "@/lib/mongodb";
 
 const CACHE_NO_STORE = "no-store, no-cache, must-revalidate";
 
