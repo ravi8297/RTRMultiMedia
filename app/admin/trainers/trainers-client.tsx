@@ -319,7 +319,17 @@ export default function AdminTrainersClient() {
                     </button>
                     <button
                       onClick={() => {
-                        setForm({ _id: trainer._id, name: trainer.name });
+                        setForm({
+                          _id: trainer._id,
+                          name: trainer.name,
+                          email: trainer.email || "",
+                          bio: trainer.bio || "",
+                          expertise: trainer.expertise ? trainer.expertise.join(", ") : "",
+                          yearsOfExperience: trainer.yearsOfExperience?.toString() || "",
+                          certifications: trainer.certifications ? trainer.certifications.join(", ") : "",
+                          image: trainer.image || "",
+                          isActive: trainer.isActive,
+                        });
                         setShowDeleteModal(true);
                       }}
                       className="text-red-600 hover:text-red-800 font-medium transition-colors"
