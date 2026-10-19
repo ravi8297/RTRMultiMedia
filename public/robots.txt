@@ -1,0 +1,19 @@
+User-agent: *
+Disallow: /admin
+Disallow: /api
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /my-courses
+Disallow: /my-learning
+Disallow: /progress
+Disallow: /profile
+
+# Allow Google AdSense and Mediapartners crawlers
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: adsbot-Google
+Allow: /
