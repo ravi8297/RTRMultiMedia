@@ -16,6 +16,16 @@ interface AboutContent {
 export default function AdminAboutClient() {
  // const router = useRouter();
 
+  const defaultMilestones: AboutContent["milestones"] = [
+    { year: 2018, title: "Founded", description: "RTR Media Solutions started with a vision to bridge the gap between academia and industry-ready tech skills." },
+    { year: 2019, title: "500+ Students Trained", description: "Crossed 500 trained professionals across Excel, Python, and SAP modules." },
+    { year: 2020, title: "Online Platform Launch", description: "Extended our reach with live online courses, serving students across India and beyond." },
+    { year: 2022, title: "1000+ Alumni", description: "Reached 1000+ successful placements with hands-on project-based learning." },
+    { year: 2024, title: "Expanded Courses", description: "Added Java, Web Development, and Data Science tracks to our catalog." },
+    { year: 2026, title: "Continuing Growth", description: "Ongoing — empowering the next generation of tech professionals with expert-led training." },
+  ];
+
+  
   // Default about content
   const defaultAbout: AboutContent = {
     title: "About RTR Media Solutions",
@@ -29,16 +39,9 @@ export default function AdminAboutClient() {
       { title: "Career Support", description: "Resume guidance, interview prep, and placement assistance to kickstart your career." },
       { title: "Flexible Learning", description: "Choose from classroom, online, or hybrid formats that fit your schedule." },
     ],
+    milestones: defaultMilestones,
   };
 
-  const defaultMilestones: AboutContent["milestones"] = [
-    { year: 2018, title: "Founded", description: "RTR Media Solutions started with a vision to bridge the gap between academia and industry-ready tech skills." },
-    { year: 2019, title: "500+ Students Trained", description: "Crossed 500 trained professionals across Excel, Python, and SAP modules." },
-    { year: 2020, title: "Online Platform Launch", description: "Extended our reach with live online courses, serving students across India and beyond." },
-    { year: 2022, title: "1000+ Alumni", description: "Reached 1000+ successful placements with hands-on project-based learning." },
-    { year: 2024, title: "Expanded Courses", description: "Added Java, Web Development, and Data Science tracks to our catalog." },
-    { year: 2026, title: "Continuing Growth", description: "Ongoing — empowering the next generation of tech professionals with expert-led training." },
-  ];
 
   // State for about content
   const [about, setAbout] = useState<AboutContent>(defaultAbout);
