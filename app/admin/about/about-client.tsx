@@ -154,16 +154,19 @@ export default function AdminAboutClient() {
           <div>
             <label className="block text-sm font-medium text-navy-700 mb-1">Milestones (year - title)</label>
             <textarea
-              value={about.milestones.map((m: any) => `${m.year}: ${m.title}`).join("\n")}
+              value={about.milestones.map((m) => `${m.year} - ${m.title}`).join("\n")}
               onChange={(e) => {
                 const lines = e.target.value.split("\n").filter((l: string) => l.trim());
-                const parsedMilestones = lines.map((l: string) => {
-                  const [year, title] = l.split(" - ").map((s: string) => s.trim());
-                  return { year: parseInt(year) || 0, title: title || "" };
-                });
                 setAbout({
                   ...about,
-                  milestones: parsedMilestones,
+                  milestones: lines.map((l: string, i: number) => {
+                    const [year, ...rest] = l.split(" - ");
+                    return {
+                      year: parseInt(year) || 0,
+                      title: rest.join(" - ").trim(),
+                      description: about.milestones[i]?.description ?? "",
+                    };
+                  }),
                 });
               }}
               rows={4}
