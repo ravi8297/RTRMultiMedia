@@ -3,6 +3,7 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "RTR Media Solutions - Training Institute",
@@ -16,6 +17,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1538816970184837"
+          crossOrigin="anonymous"
+        />
+      </Head>
       <body>
         <Providers>
           <Header />
