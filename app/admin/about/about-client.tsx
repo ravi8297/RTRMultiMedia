@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { AdminSidebar } from "@/components/AdminSidebar";
+import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
 
 interface AboutContent {
   title: string;
@@ -15,7 +14,7 @@ interface AboutContent {
 }
 
 export default function AdminAboutClient() {
-  const router = useRouter();
+ // const router = useRouter();
 
   // Default about content
   const defaultAbout: AboutContent = {
@@ -29,7 +28,8 @@ export default function AdminAboutClient() {
       { title: "Hands-On Projects", description: "Build a strong portfolio through practical projects that mirror real work scenarios." },
       { title: "Career Support", description: "Resume guidance, interview prep, and placement assistance to kickstart your career." },
       { title: "Flexible Learning", description: "Choose from classroom, online, or hybrid formats that fit your schedule." },
-  ];
+    ],
+  };
 
   const defaultMilestones: AboutContent["milestones"] = [
     { year: 2018, title: "Founded", description: "RTR Media Solutions started with a vision to bridge the gap between academia and industry-ready tech skills." },
@@ -38,7 +38,7 @@ export default function AdminAboutClient() {
     { year: 2022, title: "1000+ Alumni", description: "Reached 1000+ successful placements with hands-on project-based learning." },
     { year: 2024, title: "Expanded Courses", description: "Added Java, Web Development, and Data Science tracks to our catalog." },
     { year: 2026, title: "Continuing Growth", description: "Ongoing — empowering the next generation of tech professionals with expert-led training." },
-  };
+  ];
 
   // State for about content
   const [about, setAbout] = useState<AboutContent>(defaultAbout);
