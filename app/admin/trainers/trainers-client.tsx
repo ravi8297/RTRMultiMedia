@@ -84,7 +84,17 @@ export default function AdminTrainersClient() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    _id?: string;
+    name: string;
+    email: string;
+    bio: string;
+    expertise: string;
+    yearsOfExperience: string;
+    certifications: string;
+    image: string;
+    isActive: boolean;
+  }>({
     name: "",
     email: "",
     bio: "",
