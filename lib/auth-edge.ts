@@ -13,6 +13,14 @@ export async function middlewareAuth(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
+  // Allow search engine crawlers (Google AdSense, etc.) to access public pages
+  // without redirecting them away from public routes.
+  const userAgent = req.headers.get("user-agent");
+  const isBot = userAgent && /bot|crawler|Googlebot|mediapartners/i.test(userAgent);
+  if (isBot) {
+    return NextResponse.next();
+  }
+
   // Redirect unauthenticated users trying to access protected routes
   if (pathname.startsWith("/dashboard") && !token) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
